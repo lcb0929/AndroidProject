@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id){
-            case R.id.action_ReflashList:
-                Toast.makeText(this,"刷新列表",Toast.LENGTH_SHORT).show();
+            case R.id.action_RefreshList:
+
                 break;
         }
 

@@ -4,4 +4,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="MainValue">Click menu to choose Demo!</string>
+    <string name="title_activity_refresh_list_view">RefreshListView</string>
 </resources>
