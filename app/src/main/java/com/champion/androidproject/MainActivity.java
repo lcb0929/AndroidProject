@@ -1,5 +1,6 @@
 package com.champion.androidproject;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,7 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id){
             case R.id.action_RefreshList:
-
+                startActivity(new Intent(this,RefreshListView.class));
+                break;
+            case R.id.action_EasyImageView:
+                startActivity(new Intent(this,EasyImageViewActivity.class));
                 break;
         }
 
