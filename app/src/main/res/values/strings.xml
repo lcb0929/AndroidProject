@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">AndroidProject</string>
+    <string name="app_name">Android Project</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="MainValue">Click menu to choose Demo!</string>
+    <string name="MainValue">Click to choose Demo!</string>
     <string name="title_activity_refresh_list_view">RefreshListView</string>
-    <string name="title_activity_easy_image_view">EasyImageViewActivity</string>
+    <string name="title_activity_easy_image_view">EasyImageView</string>
 </resources>
