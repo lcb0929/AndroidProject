@@ -1,14 +1,33 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <TextView android:text="@string/MainValue"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"
         android:padding="10dp"
+        android:text="@string/MainValue"
         android:textColor="#000"
-        android:layout_centerInParent="true"/>
+        android:textSize="20sp" />
 
-</RelativeLayout>
+    <Button
+        android:textAllCaps="false"
+        android:id="@+id/btnGoRefreshListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Go to RefreshListView" />
+
+    <Button
+        android:textAllCaps="false"
+        android:id="@+id/btnGoEasyImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Go to EasyImageView" />
+
+</LinearLayout>

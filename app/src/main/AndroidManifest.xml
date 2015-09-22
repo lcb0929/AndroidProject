@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RefreshListView"
+            android:name=".RefreshListViewActivity"
             android:label="@string/title_activity_refresh_list_view" >
         </activity>
         <activity

@@ -1,39 +1,49 @@
 package com.champion.androidproject;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Button btnGoRefreshListView;
+    private Button btnGoEasyImageView;
+
+    private void assignViews() {
+        btnGoRefreshListView = (Button) findViewById(R.id.btnGoRefreshListView);
+        btnGoEasyImageView = (Button) findViewById(R.id.btnGoEasyImageView);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        assignViews();
+        InitEvent();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void InitEvent() {
+        btnGoEasyImageView.setOnClickListener(new MyOnClickListener());
+        btnGoRefreshListView.setOnClickListener(new MyOnClickListener());
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        switch (id){
-            case R.id.action_RefreshList:
-                startActivity(new Intent(this,RefreshListView.class));
-                break;
-            case R.id.action_EasyImageView:
-                startActivity(new Intent(this,EasyImageViewActivity.class));
-                break;
+    class MyOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.btnGoEasyImageView:
+                    startActivity(new Intent(MainActivity.this,EasyImageViewActivity.class));
+                    break;
+                case R.id.btnGoRefreshListView:
+                    startActivity(new Intent(MainActivity.this,RefreshListViewActivity.class));
+                    break;
+            }
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
 }

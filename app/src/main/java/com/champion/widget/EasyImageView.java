@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -21,22 +22,7 @@ public class EasyImageView extends ImageView {
 
 
     private MODEL mModel = MODEL.NORMAL;    //图片显示模式
-    private ImageLoader mImageLoader;
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bitmap bitmap = (Bitmap) msg.obj;
-            if(null != bitmap){
-                if(mModel == MODEL.CIRCUALR){
-                    bitmap = toRoundBitmap(bitmap);
-                }
-                setImageBitmap(bitmap);
-            }else{
-                return;
-            }
-        }
-    };
+    private ImageLoader mImageLoader;       //图片加载器
 
     public EasyImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -47,41 +33,28 @@ public class EasyImageView extends ImageView {
      * 图片显示模式枚举
      */
     public enum MODEL{
-        CIRCUALR,
+        CIRCULAR,
         NORMAL
     }
 
+    /**
+     * 使用网络URL设置图片
+     * @param urlString 网络图片路径
+     * @param model     模式
+     */
     public void setImageUrl(final String urlString,MODEL model){
         mModel = model;
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                Bitmap bitmap = ImageLoader.getInstance().GetBitmapFromCache(urlString);
-                if(null == bitmap)
-                    bitmap = ImageLoader.getInstance().GetBitmapFromUrl(urlString);
-
-                if(null != bitmap) {
-                    Message message = Message.obtain();
-                    message.obj = bitmap;
-                    mHandler.sendMessage(message);
-                }else{
-                    return;
-                }
-            }
-        }.start();
+        new getBitmapFromUrlAsync().execute(urlString);
     }
 
-
+    /**
+     * 根据模式设置图片
+     * @param bitmap    传入的图片
+     * @param model     模式
+     */
     public void setImageBitmap(Bitmap bitmap , MODEL model){
         mModel = model;
-        if(null != bitmap) {
-            Message message = Message.obtain();
-            message.obj = bitmap;
-            mHandler.sendMessage(message);
-        }else{
-            return;
-        }
+        setImage(bitmap);
     }
 
     /**
@@ -120,6 +93,43 @@ public class EasyImageView extends ImageView {
         canvas.drawBitmap(bitmap, null, rect, paint);
         //返回已经绘画好的backgroundBmp
         return backgroundBmp;
+    }
+
+
+    /**
+     * 根据模式设置图片
+     * @param bitmap    需要设置的图片
+     */
+    private void setImage(Bitmap bitmap){
+        if(null != bitmap){
+            if(mModel == MODEL.CIRCULAR){
+                bitmap = toRoundBitmap(bitmap);
+            }
+            setImageBitmap(bitmap);
+        }else{
+            return;
+        }
+    }
+
+    /**
+     * 异步任务类
+     */
+    private class getBitmapFromUrlAsync extends AsyncTask<String,Void,Bitmap>{
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            String urlString = params[0];
+            Bitmap bitmap = ImageLoader.getInstance().GetBitmapFromCache(urlString);
+            if(null == bitmap)
+                bitmap = ImageLoader.getInstance().GetBitmapFromUrl(urlString);
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            setImage(bitmap);
+        }
     }
 
 
