@@ -84,8 +84,8 @@ public class EasyImageView extends ImageView {
         }
 
         //构建一个bitmap,将宽高设置为ImageView的宽高
-        Bitmap backgroundBmp = Bitmap.createBitmap(width,
-                height, Bitmap.Config.ARGB_8888);
+        Bitmap backgroundBmp = Bitmap.createBitmap(r,
+                r, Bitmap.Config.ARGB_8888);
         //new一个Canvas，在backgroundBmp上画图
         Canvas canvas = new Canvas(backgroundBmp);
         Paint paint = new Paint();
@@ -93,8 +93,7 @@ public class EasyImageView extends ImageView {
         paint.setAntiAlias(true);
         //宽高相等，即正方形
         RectF rect = new RectF(0,0,r,r);
-        //通过制定的rect画一个圆角矩形，当圆角X轴方向的半径等于Y轴方向的半径时，
-        //且都等于r/2时，画出来的圆角矩形就是圆形
+        //通过制定的rect画一个圆,起始角度为0度.结束角度为360度.
         canvas.drawArc(rect, 0, 360, false, paint);
         //设置当两个图形相交时的模式，SRC_IN为取SRC图形相交的部分，多余的将被去掉
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
