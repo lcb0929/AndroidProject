@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.champion.widget.EasyImageView;
 
@@ -72,6 +73,7 @@ public class EasyImageViewActivity extends AppCompatActivity {
                     tvUrl.setText("当前URL："+url);
                     tvModel.setVisibility(View.VISIBLE);
                     tvUrl.setVisibility(View.VISIBLE);
+
                     break;
                 case R.id.btnNetNormal:
                     eiv.setImageUrl(url, EasyImageView.MODEL.NORMAL);
