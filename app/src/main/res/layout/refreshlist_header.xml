@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dip" >
+        android:layout_margin="10dip">
 
         <ImageView
             android:id="@+id/iv_listview_header_arrow"
@@ -30,24 +30,40 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_listview_header_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="下拉刷新"
+            android:text="@string/refresh_text_down_refresh"
             android:textColor="#FF0000"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_listview_header_last_update_time"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            android:text="最后刷新时间: 1990-09-09 09:09:09"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:text="@string/refresh_text_date_prompt"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_listview_header_last_update_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:text="1990-09-09 09:09:09"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
