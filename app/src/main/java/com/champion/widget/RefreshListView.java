@@ -39,12 +39,14 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     private int footerViewHeight;   //脚布局高度
     private headerViewHolder mHeaderViewHolder; //头布局控件集
     private OnRefreshListener mOnRefreshListener;   //下拉刷新回调接口
+    private OnLoadingMoreListener mOnLoadingMoreListener; //加载更多回调接口
 
 
     private RotateAnimation upAnimation;    // 箭头向上旋转的动画
     private RotateAnimation downAnimation;    // 箭头向下旋转的动画
     private int mFirstVisibleItem;  //首个滚动可视Item
     private int startY;             //按下手指触发点Y轴坐标
+    private boolean IsLoadingMore = false;  //是否正在加载更多
 
 
     /**
@@ -62,6 +64,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
     /**
      * 初始化头布局控件
+     *
      * @return
      */
     private headerViewHolder getHeaderViewHolder() {
@@ -85,10 +88,19 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
     /**
      * 设置下拉刷新回调事件
+     *
      * @param refreshListener
      */
     public void setOnRefreshListener(OnRefreshListener refreshListener) {
         this.mOnRefreshListener = refreshListener;
+    }
+
+    public interface OnLoadingMoreListener{
+        void OnLoadingMore();
+    }
+
+    public void setOnLoadingMoreListener(OnLoadingMoreListener loadingMoreListener){
+        this.mOnLoadingMoreListener = loadingMoreListener;
     }
 
 
@@ -116,6 +128,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
     /**
      * 构造
+     *
      * @param context
      * @param attrs
      */
@@ -163,7 +176,6 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
      * 初始化头布局完成下拉刷新
      */
     private void initHeaderView() {
-        //TODO 初始化头布局
         mHeaderView = mInflater.inflate(R.layout.refreshlist_header, null);
         mHeaderView.measure(0, 0);
         headerViewHeight = mHeaderView.getMeasuredHeight();
@@ -171,13 +183,13 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
         initArrow();
         mHeaderViewHolder = getHeaderViewHolder();
         this.addHeaderView(mHeaderView);
+        this.setOnScrollListener(this);
     }
 
     /**
      * 初始化脚布局完成加载更多
      */
     private void initFooterView() {
-        //TODO 初始化脚布局
         mFooterView = mInflater.inflate(R.layout.refreshlist_footer, null);
         mFooterView.measure(0, 0);
         footerViewHeight = mFooterView.getMeasuredHeight();
@@ -185,13 +197,13 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
         this.addFooterView(mFooterView);
     }
 
-    private String getLastUpdateTime(){
+    private String getLastUpdateTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date());
     }
 
     /**
-     *初始化头布局箭头动画
+     * 初始化头布局箭头动画
      */
     private void initArrow() {
         upAnimation = new RotateAnimation(
@@ -232,11 +244,16 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
     /**
      * 隐藏头布局
      */
-    public void hideHeaderView(){
-        mHeaderView.setPadding(0,-headerViewHeight,0,0);
+    public void hideHeaderView() {
+        mHeaderView.setPadding(0, -headerViewHeight, 0, 0);
         mCurrRefreshStatus = REFRESH_STATUS.DOWN_REFRESH;
         changeHeaderViewStatus();
         mHeaderViewHolder.tv_HeaderLastUpdateTime.setText(getLastUpdateTime());
+    }
+
+    public void hideFooterView(){
+        mFooterView.setPadding(0,-footerViewHeight,0,0);
+        IsLoadingMore = false;
     }
 
     /**
@@ -266,6 +283,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
     /**
      * 重写触摸事件
+     *
      * @param ev
      * @return
      */
@@ -285,7 +303,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
                     //必须是在头部并且偏移量大于0时,才可以拉下头布局
                     if (mFirstVisibleItem == 0 && diff > 0) {
                         int top = -headerViewHeight + diff;
-                        if(mCurrRefreshStatus == REFRESH_STATUS.REFRESHING)
+                        if (mCurrRefreshStatus == REFRESH_STATUS.REFRESHING)
                             break;
                         //当拉伸偏移量大于头布局高度,进入释放刷新状态
                         if (top > 0 && mCurrRefreshStatus == REFRESH_STATUS.DOWN_REFRESH) {
@@ -312,7 +330,7 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
                         mHeaderView.setPadding(0, 0, 0, 0);
                         mCurrRefreshStatus = REFRESH_STATUS.REFRESHING;
                         changeHeaderViewStatus();
-                        if(null != mOnRefreshListener)
+                        if (null != mOnRefreshListener)
                             mOnRefreshListener.OnRefreshing();
                     }
                 }
@@ -324,7 +342,19 @@ public class RefreshListView extends ListView implements AbsListView.OnScrollLis
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+        if(mCurrModel == LOADINGMORE || mCurrModel == BOTH){
+            if (scrollState == SCROLL_STATE_FLING || scrollState == SCROLL_STATE_IDLE) {
+                int lastItemPosition = getLastVisiblePosition();
+                if(lastItemPosition == (getCount() - 1) && !IsLoadingMore){
+                    IsLoadingMore = true;
+                    mFooterView.setPadding(0,0,0,0);
+                    this.setSelection(getCount()-1);
+                    if(null != mOnLoadingMoreListener) {
+                        mOnLoadingMoreListener.OnLoadingMore();
+                    }
+                }
+            }
+        }
     }
 
     @Override

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.champion.utils.SmartAdapter;
 import com.champion.utils.ViewHolder;
@@ -32,7 +34,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
 
         initData();
         initEvent();
-        rv.setModel(RefreshListView.MODEL.NORMAL);
+        rv.setModel(RefreshListView.MODEL.BOTH);
         myAdapter = new MyAdapter(this,listData, R.layout.refreshlist_item);
 
         rv.setAdapter(myAdapter);
@@ -46,7 +48,13 @@ public class RefreshListViewActivity extends AppCompatActivity {
         rv.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
             @Override
             public void OnRefreshing() {
-                new MyAsyncTask().execute();
+                new RefreshAsyncTask().execute();
+            }
+        });
+        rv.setOnLoadingMoreListener(new RefreshListView.OnLoadingMoreListener() {
+            @Override
+            public void OnLoadingMore() {
+                new LoadingMoreAsyncTask().execute();
             }
         });
     }
@@ -57,7 +65,7 @@ public class RefreshListViewActivity extends AppCompatActivity {
     private void initData() {
         listData = new ArrayList<String>();
         for (int i = 1; i <= 30; i++) {
-            listData.add(String.format("这是默认生成的第%d条数据",i));
+            listData.add(String.format("Default_data_%d",i));
         }
     }
 
@@ -77,13 +85,13 @@ public class RefreshListViewActivity extends AppCompatActivity {
     }
 
     /**
-     * 异步任务
+     * 下拉刷新异步任务
      */
-    class MyAsyncTask extends AsyncTask<Void,Void,Void>{
+    class RefreshAsyncTask extends AsyncTask<Void,Void,Void>{
 
         @Override
         protected Void doInBackground(Void... params) {
-            listData.add(0, "这是刷新的数据");
+            listData.add(0, "Refresh_data");
             try {
                 //模拟刷新进度效果,线程停止两秒
                 Thread.sleep(2000);
@@ -98,6 +106,34 @@ public class RefreshListViewActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             myAdapter.notifyDataSetChanged();
             rv.hideHeaderView();    //刷新成功,隐藏头布局
+        }
+    }
+
+    /**
+     * 加载更多异步任务
+     */
+    class LoadingMoreAsyncTask extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            listData.add("LoadingMore_data_1");
+            listData.add("LoadingMore_data_2");
+            listData.add("LoadingMore_data_3");
+            listData.add("LoadingMore_data_4");
+            try {
+                //模拟加载进度效果,线程停止两秒
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            myAdapter.notifyDataSetChanged();
+            rv.hideFooterView();    //加载成功,隐藏脚布局
         }
     }
 
